@@ -1,53 +1,44 @@
 package test.java.com.example;
 
-import main.java.com.example.UserService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.mockito.MockedStatic;
+import java.sql.*;
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import com.example.UserService;
 
 class UserServiceTest {
+    private final UserService userService = new UserService();
 
-    private UserService userService;
+    @Test
+    void testFindUserSuccess() throws Exception {
+        try (MockedStatic<DriverManager> mockedDriverManager = mockStatic(DriverManager.class)) {
+            Connection mockConn = mock(Connection.class);
+            PreparedStatement mockPstmt = mock(PreparedStatement.class);
+            ResultSet mockRs = mock(ResultSet.class);
 
-    @BeforeEach
-    void setUp() {
-        userService = new UserService();
+            mockedDriverManager.when(() -> DriverManager.getConnection(anyString(), anyString(), anyString()))
+                    .thenReturn(mockConn);
+            when(mockConn.prepareStatement(anyString())).thenReturn(mockPstmt);
+            when(mockPstmt.executeQuery()).thenReturn(mockRs);
+            when(mockRs.next()).thenReturn(true);
+            when(mockRs.getString("name")).thenReturn("admin");
+
+            assertDoesNotThrow(() -> userService.findUser("admin"));
+        }
     }
 
     @Test
-    void testCreateUser() {
-        // void method - just verify it doesn't throw an exception
-        assertDoesNotThrow(() -> userService.createUser("testUser", "test@example.com"));
-    }
+    void testDeleteUserSuccess() throws Exception {
+        try (MockedStatic<DriverManager> mockedDriverManager = mockStatic(DriverManager.class)) {
+            Connection mockConn = mock(Connection.class);
+            PreparedStatement mockPstmt = mock(PreparedStatement.class);
 
-    @Test
-    void testGetUser() {
-        userService.createUser("testUser", "test@example.com");
-        assertNotNull(userService.getUser("testUser"));
-    }
+            mockedDriverManager.when(() -> DriverManager.getConnection(anyString(), anyString(), anyString()))
+                    .thenReturn(mockConn);
+            when(mockConn.prepareStatement(anyString())).thenReturn(mockPstmt);
 
-    @Test
-    void testGetUserNotFound() {
-        assertNull(userService.getUser("nonExistent"));
-    }
-
-    @Test
-    void testUpdateUser() {
-        userService.createUser("testUser", "test@example.com");
-        // void method - just verify it doesn't throw an exception
-        assertDoesNotThrow(() -> userService.updateUser("testUser", "new@example.com"));
-    }
-
-    @Test
-    void testDeleteUser() {
-        userService.createUser("testUser", "test@example.com");
-        // void method - just verify it doesn't throw an exception
-        assertDoesNotThrow(() -> userService.deleteUser("testUser"));
-    }
-
-    @Test
-    void testValidateEmail() {
-        assertTrue(userService.validateEmail("valid@example.com"));
-        assertFalse(userService.validateEmail("invalid-email"));
+            assertDoesNotThrow(() -> userService.deleteUser("admin"));
+        }
     }
 }

@@ -1,35 +1,21 @@
-package main.java.com.example;
+package com.example;
 
 public class Calculator {
 
     public int calculate(int a, int b, String op) {
-        if (op.equals("add") || op.equals("add-again")) {
-            return a + b;
-        } else if (op.equals("sub") || op.equals("sub-again")) {
-            return a - b;
-        } else if (op.equals("mul")) {
-            return a * b;
-        } else if (op.equals("div")) {
-            if (b == 0) {
-                return 0;
-            } else {
-                return a / b;
-            }
-        } else if (op.equals("mod")) {
-            return a % b;
-        } else if (op.equals("pow")) {
-            int result = 1;
-            for (int i = 0; i < b; i++) {
-                result = result * a;
-            }
-            return result;
-        } else {
+        if (op == null) {
             return 0;
         }
-    }
 
-    public int sumValues(int a, int b) {
-        return a + b;
+        // Using modern Switch Expression (fixes java:S6208)
+        return switch (op) {
+            case "add", "add-again" -> a + b;   // Merged labels
+            case "sub", "sub-again" -> a - b;   // Merged labels
+            case "mul"             -> a * b;
+            case "div"             -> (b == 0) ? 0 : a / b;
+            case "mod"             -> a % b;
+            case "pow"             -> (int) Math.pow(a, b);
+            default                -> 0;
+        };
     }
-
 }

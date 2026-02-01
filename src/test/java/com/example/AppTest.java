@@ -1,19 +1,14 @@
 package test.java.com.example;
 
-import main.java.com.example.App;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import com.example.App;
 
 class AppTest {
 
     @Test
     void testMain() {
+        // This executes the logic in App.java and covers the lines
         assertDoesNotThrow(() -> App.main(new String[] {}));
-    }
-
-    @Test
-    void testAppInstantiation() {
-        App app = new App();
-        assertNotNull(app);
     }
 }

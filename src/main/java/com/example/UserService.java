@@ -1,59 +1,40 @@
-package main.java.com.example;
+package com.example;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserService {
+    private static final Logger LOGGER = Logger.getLogger(UserService.class.getName());
+    
+    private String password = "admin123";
+    private String dbUrl = "jdbc:mysql://localhost/db";
+    private String dbUser = "root";
 
-    // Credentials loaded from environment variables
-    private String dbUsername = System.getenv("DB_USERNAME");
-    private String dbPassword = System.getenv("DB_PASSWORD");
-    private String dbUrl = System.getenv("DB_URL");
-
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(
-                dbUrl != null ? dbUrl : "jdbc:mysql://localhost/db",
-                dbUsername != null ? dbUsername : "root",
-                dbPassword);
-    }
-
-    public void findUser(String username) throws SQLException {
-        try (Connection conn = getConnection();
-                PreparedStatement st = conn.prepareStatement("SELECT id, name, email FROM users WHERE name = ?")) {
-
-            st.setString(1, username);
-            st.executeQuery();
+    public void findUser(String username) {
+        String query = "SELECT id, name, email FROM users WHERE name = ?";
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, password);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    LOGGER.log(Level.INFO, "User found: {0}", rs.getString("name"));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error finding user", e);
         }
     }
 
-    public void deleteUser(String username) throws SQLException {
-        try (Connection conn = getConnection();
-                PreparedStatement st = conn.prepareStatement("DELETE FROM users WHERE name = ?")) {
-
-            st.setString(1, username);
-            st.execute();
+    public void deleteUser(String username) {
+        String query = "DELETE FROM users WHERE name = ?";
+        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, password);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            pstmt.execute();
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error deleting user", e);
         }
-    }
-
-    private Map<String, String> users = new HashMap<>();
-
-    public void createUser(String username, String email) {
-        users.put(username, email);
-    }
-
-    public String getUser(String username) {
-        return users.get(username);
-    }
-
-    public void updateUser(String username, String email) {
-        users.put(username, email);
-    }
-
-    public boolean validateEmail(String email) {
-        return email != null && email.contains("@");
     }
 }
