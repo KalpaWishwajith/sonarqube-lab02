@@ -7,14 +7,20 @@ import java.sql.SQLException;
 
 public class UserService {
 
-    // SECURITY ISSUE: Hardcoded credentials
-    private String password = System.getenv("DB_PASSWORD");
+    // Credentials loaded from environment variables
+    private String dbUsername = System.getenv("DB_USERNAME");
+    private String dbPassword = System.getenv("DB_PASSWORD");
+    private String dbUrl = System.getenv("DB_URL");
 
-    // VULNERABILITY: SQL Injection
+    private Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(
+                dbUrl != null ? dbUrl : "jdbc:mysql://localhost/db",
+                dbUsername != null ? dbUsername : "root",
+                dbPassword);
+    }
+
     public void findUser(String username) throws SQLException {
-
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/db",
-                "root", password);
+        try (Connection conn = getConnection();
                 PreparedStatement st = conn.prepareStatement("SELECT id, name, email FROM users WHERE name = ?")) {
 
             st.setString(1, username);
@@ -23,13 +29,11 @@ public class UserService {
     }
 
     public void deleteUser(String username) throws SQLException {
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/db",
-                "root", password);
+        try (Connection conn = getConnection();
                 PreparedStatement st = conn.prepareStatement("DELETE FROM users WHERE name = ?")) {
 
             st.setString(1, username);
             st.execute();
         }
     }
-
 }
