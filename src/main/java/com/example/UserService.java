@@ -8,7 +8,7 @@ import java.sql.SQLException;
 public class UserService {
 
     // SECURITY ISSUE: Hardcoded credentials
-    private String password = "admin123";
+    private String password = System.getenv("DB_PASSWORD");
 
     // VULNERABILITY: SQL Injection
     public void findUser(String username) throws SQLException {

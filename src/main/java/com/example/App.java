@@ -10,10 +10,9 @@ public class App {
 
         Calculator calc = new Calculator();
 
-        logger.info(String.valueOf(calc.calculate(10, 5, "add")));
+        System.out.println(String.valueOf(calc.calculate(10, 5, "add"))); // Fixed: out.println
 
         UserService service = new UserService();
         service.findUser("admin");
-        service.deleteUser("admin"); // NEW dangerous call
     }
 }

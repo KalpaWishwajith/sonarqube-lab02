@@ -2,16 +2,11 @@ package main.java.com.example;
 
 public class Calculator {
 
-    // EVEN WORSE: longer, more complex, duplicated logic
     public int calculate(int a, int b, String op) {
-        if (op.equals("add")) {
+        if (op.equals("add") || op.equals("add-again")) {
             return a + b;
-        } else if (op.equals("add-again")) {
-            return a + b; // DUPLICATION
-        } else if (op.equals("sub")) {
+        } else if (op.equals("sub") || op.equals("sub-again")) {
             return a - b;
-        } else if (op.equals("sub-again")) {
-            return a - b; // DUPLICATION
         } else if (op.equals("mul")) {
             return a * b;
         } else if (op.equals("div")) {
@@ -33,17 +28,7 @@ public class Calculator {
         }
     }
 
-    // Code Duplication (students must remove)
-    public int addNumbers(int x, int y) {
-        return x + y;
-    }
-
     public int sumValues(int a, int b) {
-        return a + b;
-    }
-
-    // INTENTIONAL DUPLICATION
-    public int addAgain(int a, int b) {
         return a + b;
     }
 
