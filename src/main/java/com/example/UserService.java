@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserService {
 
@@ -35,5 +37,23 @@ public class UserService {
             st.setString(1, username);
             st.execute();
         }
+    }
+
+    private Map<String, String> users = new HashMap<>();
+
+    public void createUser(String username, String email) {
+        users.put(username, email);
+    }
+
+    public String getUser(String username) {
+        return users.get(username);
+    }
+
+    public void updateUser(String username, String email) {
+        users.put(username, email);
+    }
+
+    public boolean validateEmail(String email) {
+        return email != null && email.contains("@");
     }
 }

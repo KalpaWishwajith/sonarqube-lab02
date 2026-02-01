@@ -10,7 +10,7 @@ public class App {
 
         Calculator calc = new Calculator();
 
-        logger.info(String.valueOf(calc.calculate(10, 5, "add"))); // Fixed: out.println
+        logger.info(() -> String.valueOf(calc.calculate(10, 5, "add")));
 
         UserService service = new UserService();
         service.findUser("admin");
