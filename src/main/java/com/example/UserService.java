@@ -22,11 +22,6 @@ public class UserService {
         }
     }
 
-    // SMELL: Unused method
-    public void notUsed() {
-        System.out.println("I am never called");
-    }
-
     public void deleteUser(String username) throws SQLException {
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/db",
                 "root", password);
